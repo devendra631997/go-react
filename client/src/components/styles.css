@@ -1,0 +1,25 @@
+* {
+    font-family: sans-serif;
+  }
+  
+  .flexParent {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+  }
+  
+  .flexParent > div {
+    width: 200px;
+    height: 200px;
+    border: 1px solid black;
+    margin: 10px;
+    border-radius: 5px;
+  }
+  input {
+    width: 50px;
+    text-align: center;
+  }
+  div {
+    text-align: center;
+  }
+  
