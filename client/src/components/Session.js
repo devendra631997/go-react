@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { apiURl } from '../api'
 import { deleteCookie } from '../utils'
-import ReactDOM from "react-dom";
 import API from "./mockAPI";
 import "./styles.css";
 
