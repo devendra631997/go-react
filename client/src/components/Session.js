@@ -112,6 +112,7 @@ const Session = ({ history }) => {
       {item.inCart && (
         <div>
           <p> Item Name: {item.name}</p>
+          <img src={item.image} alt=""/>
           <p>
             Item Count: <button        style={{ height: '30px' }} onClick={() => decreaseQuantity(i)}>-</button>{" "}
             {item.count} <button        style={{ height: '30px' }} onClick={() => increaseQuantity(i)}>+</button>
