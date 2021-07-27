@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { apiURl } from '../api'
 import { deleteCookie } from '../utils'
-import ReactDOM from "react-dom";
 import API from "./mockAPI";
 import "./styles.css";
 
@@ -113,6 +112,7 @@ const Session = ({ history }) => {
       {item.inCart && (
         <div>
           <p> Item Name: {item.name}</p>
+          <img src={item.image} alt=""/>
           <p>
             Item Count: <button        style={{ height: '30px' }} onClick={() => decreaseQuantity(i)}>-</button>{" "}
             {item.count} <button        style={{ height: '30px' }} onClick={() => increaseQuantity(i)}>+</button>
@@ -123,6 +123,7 @@ const Session = ({ history }) => {
               ? item.count * item.price
               : `${(item.count * item.price).toFixed(2)}`}
           </p>
+          
           <button        style={{ height: '30px' }} onClick={() => removeFromCart(i)}>Remove From Cart</button>
           <hr />
         </div>

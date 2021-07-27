@@ -2,8 +2,6 @@ package controller
 
 import (
 	"database/sql"
-	"fmt"
-	"github.com/go-postgres-jwt-react-starter/server/config"
 	"net/http"
 	"time"
 
@@ -33,34 +31,6 @@ func AddProducts(c *gin.Context) {
 }
 
 
-//Initiate Password reset email with reset url
-func InitiatePasswordReset(c *gin.Context){
-	var createReset db.CreateReset
-	c.Bind(&createReset)
-	if id,ok := checkAndRetrieveUserIDViaEmail(createReset); ok{
-		link := fmt.Sprintf("%s/reset/%d",config.CLIENT_URL,id)
-		//Reset link is returned in json response for testing purposes since no email service is integrated
-		c.JSON(http.StatusOK, gin.H{"success": true, "msg": "Successfully sent reset mail to " + createReset.Email, "link":link})
-	} else{
-		c.JSON(http.StatusNotFound,gin.H{"success": false, "errors":"No user found for email: " + createReset.Email})
-	}
-}
-
-func ResetPassword(c *gin.Context){
-	var resetPassword db.ResetPassword
-	c.Bind(&resetPassword)
-	if ok,errStr := utils.ValidatePasswordReset(resetPassword); ok{
-		password := db.CreateHashedPassword(resetPassword.Password)
-		_,err := db.DB.Query(db.UpdateUserPasswordQuery,resetPassword.ID,password)
-		errors.HandleErr(c, err)
-		c.JSON(http.StatusOK,gin.H{"success":true, "msg": "User password reset successfully"})
-	} else{
-		c.JSON(http.StatusOK, gin.H{"success":false,"errors":errStr})
-	}
-
-}
-
-
 //Create new user
 func Create(c *gin.Context) {
 	var user db.Register
@@ -71,7 +41,6 @@ func Create(c *gin.Context) {
 	if exists == true {
 		valErr = append(valErr, "email already exists")
 	}
-	fmt.Println(valErr)
 	if len(valErr) > 0 {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"success": false, "errors": valErr})
 		return
@@ -106,7 +75,6 @@ func Login(c *gin.Context) {
 	err := row.Scan(&id, &name, &password, &email, &createdAt, &updatedAt)
 
 	if err == sql.ErrNoRows {
-		fmt.Println(sql.ErrNoRows, "err")
 		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "msg": "incorrect credentials"})
 		return
 	}
@@ -142,8 +110,6 @@ func Login(c *gin.Context) {
 		Value:   tokenString,
 		Expires: expirationTime,
 	})
-
-	fmt.Println(tokenString)
 	c.JSON(http.StatusOK, gin.H{"success": true, "msg": "logged in succesfully", "user": claims.User, "token": tokenString})
 }
 
@@ -156,21 +122,4 @@ func checkUserExists(user db.Register) bool {
 		return false
 	}
 	return true
-}
-
-//Returns -1 as ID if the user doesnt exist in the table
-func checkAndRetrieveUserIDViaEmail(createReset db.CreateReset) (int,bool){
-	rows, err := db.DB.Query(db.CheckUserExists,createReset.Email)
-	if err != nil{
-		return -1,false
-	}
-	if !rows.Next(){
-		return -1,false
-	}
-	var id int
-	err = rows.Scan(&id)
-	if err != nil{
-		return -1,false
-	}
-	return id,true
 }
