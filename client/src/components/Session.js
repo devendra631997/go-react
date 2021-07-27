@@ -123,6 +123,7 @@ const Session = ({ history }) => {
               ? item.count * item.price
               : `${(item.count * item.price).toFixed(2)}`}
           </p>
+          
           <button        style={{ height: '30px' }} onClick={() => removeFromCart(i)}>Remove From Cart</button>
           <hr />
         </div>
